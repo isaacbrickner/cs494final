@@ -1,95 +1,96 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
+
+import { Canvas } from "@react-three/fiber";
+
+import { Desk } from "./components/desk"; 
+import { CameraControls, Sky, Stage, Text3D } from "@react-three/drei";
+import { RecordPlayer } from "./components/recordplayer";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { Speaker } from "./components/speaker";
+import Box from "@mui/material/Box"
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Link from "next/link";
+import { Sofa } from "./components/couch";
+import { Stool } from "./components/stool";
+import { Rug } from "./components/rug";
+import { Room } from "./components/room";
+import { Group } from "three/examples/jsm/libs/tween.module.js";
+import { Sidetable } from "./components/sideTable";
+import { Piano } from "./components/Piano";
+import { Posters } from "./components/poster";
+
+
 
 export default function Home() {
+	const cameraControlRef = useRef<CameraControls | null>(null);
+  const [image, setImage] = useState<string>("")
+
+
+  useEffect(() => {
+    fetch('/pages/api/photos')
+      .then((res) => 
+        res.json())
+      .then((data) => {
+        console.log(data)
+        console.log(data[0]["urls"].raw)
+        const art = data[0]["urls"].raw
+        const url = String(art)
+        console.log(typeof url)
+        setImage(url)
+      })
+  }, [])
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+    <>
+    <Link href="/pages/page">
+    <div id="scroll-container">
+    <div id="scroll-text" className="titleDiv">
+    <span className="red-text">CS</span> 
+
+    <span className="yellow-text"> 494</span> 
+            <span className="blue-text"> Final click me to</span>
+            <span className="red-text">  go to a new page</span>
+            <span className="yellow-text"> instead of </span>
+            <span className="blue-text"> three.js </span>
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
       </div>
+      </Link>
+  
+    
+  <Box component="section" sx={{my:'auto', mx: 'auto', width: 1280, height: 720, }}>
+   <Box component="section" sx={{position: "fixed", my: '10%', mx: 'auto', width: 1280, height: 720, }}>
+      <Canvas camera= {{fov: 90, near: 0.1, far: 1000, position: [0, 0, -5]}}>
+      <ambientLight intensity={0.03} />
+      {/* <fog attach="fog" args={['#ff5020', 5, 1800]} /> */}
+      <spotLight angle={0.14} color="#ffd0d0" penumbra={1} position={[25, 50, -20]} shadow-mapSize={[2048, 2048]} shadow-bias={-0.0001} castShadow />
+      <Sky sunPosition={[0, 0.4, 10]} />
+      <Suspense fallback={null}>
+      
+      <CameraControls ref={cameraControlRef} />
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+    {/* <ambientLight intensity={1.5} /> */}
+    {/* <Sky distance={4500000} sunPosition={[0, 1, 0]} inclination={0} azimuth={180} rayleigh={0} /> */}
+    <Stage adjustCamera={false} preset={"rembrandt"} environment={"apartment"}>
+    <Desk />
+    <RecordPlayer />
+    <Speaker/>
+    <Sofa/>
+    <Stool/>
+    <Rug/>
+    <Room/>
+    <Sidetable/>
+    <Piano/>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    {/* <Posters/> */}
+    
+    </Stage>
+  
+    </Suspense>
+    </Canvas>
+     </Box>
+    </Box>
+      </>
   );
 }
+
+
